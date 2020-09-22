@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,12 +39,25 @@ public abstract class TestContextEvent extends ApplicationEvent {
 	}
 
 	/**
-	 * Get the {@code TestContext} associated with this event.
+	 * Get the {@link TestContext} associated with this event.
 	 * @return the {@code TestContext} associated with this event (never {@code null})
+	 * @see #getTestContext()
 	 */
 	@Override
-	public TestContext getSource() {
+	public final TestContext getSource() {
 		return (TestContext) super.getSource();
+	}
+
+	/**
+	 * Alias for {@link #getSource()}.
+	 * <p>This method may be favored over {@code getSource()} &mdash; for example,
+	 * to improve readability in SpEL expressions for event processing
+	 * {@linkplain org.springframework.context.event.EventListener#condition conditions}.
+	 * @return the {@code TestContext} associated with this event (never {@code null})
+	 * @see #getSource()
+	 */
+	public final TestContext getTestContext() {
+		return getSource();
 	}
 
 }

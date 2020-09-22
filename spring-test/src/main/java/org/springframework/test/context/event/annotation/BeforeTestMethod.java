@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.test.context.event.BeforeTestMethodEvent;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
@@ -41,17 +42,29 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * {@link org.springframework.test.context.TestExecutionListener#beforeTestMethod}
  * lifecycle.
  *
+ * <p>Event processing can optionally be made {@linkplain #value conditional} via
+ * a SpEL expression &mdash; for example,
+ * {@code @BeforeTestMethod("event.testContext.testMethod.name matches 'test.*'")}.
+ *
  * <p>The {@code EventPublishingTestExecutionListener} must be registered in order
  * for this annotation to have an effect &mdash; for example, via
  * {@link org.springframework.test.context.TestExecutionListeners @TestExecutionListeners}.
  *
  * @author Frank Scheffler
+ * @author Sam Brannen
  * @since 5.2
  * @see BeforeTestMethodEvent
  */
-@Documented
 @Retention(RUNTIME)
 @Target({ METHOD, ANNOTATION_TYPE })
+@Documented
 @EventListener(BeforeTestMethodEvent.class)
 public @interface BeforeTestMethod {
+
+	/**
+	 * Alias for {@link EventListener#condition}.
+	 */
+	@AliasFor(annotation = EventListener.class, attribute = "condition")
+	String value() default "";
+
 }

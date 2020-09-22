@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2019 the original author or authors.
+ * Copyright 2002-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,8 @@
 
 package org.springframework.context.support;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +42,7 @@ import org.springframework.lang.Nullable;
  *
  * <p>For an implementation of a thread-based {@code Scope} with support for destruction
  * callbacks, refer to
- * <a href="http://www.springbyexample.org/examples/custom-thread-scope-module.html">Spring by Example</a>.
+ * <a href="https://www.springbyexample.org/examples/custom-thread-scope-module.html">Spring by Example</a>.
  *
  * <p>Thanks to Eugene Kuleshov for submitting the original prototype for a thread scope!
  *
@@ -59,7 +59,7 @@ public class SimpleThreadScope implements Scope {
 			new NamedThreadLocal<Map<String, Object>>("SimpleThreadScope") {
 				@Override
 				protected Map<String, Object> initialValue() {
-					return new HashMap<>();
+					return new ConcurrentHashMap<>();
 				}
 			};
 
@@ -67,12 +67,7 @@ public class SimpleThreadScope implements Scope {
 	@Override
 	public Object get(String name, ObjectFactory<?> objectFactory) {
 		Map<String, Object> scope = this.threadScope.get();
-		Object scopedObject = scope.get(name);
-		if (scopedObject == null) {
-			scopedObject = objectFactory.getObject();
-			scope.put(name, scopedObject);
-		}
-		return scopedObject;
+		return scope.computeIfAbsent(name, k -> objectFactory.getObject());
 	}
 
 	@Override
